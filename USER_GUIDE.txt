@@ -1,0 +1,91 @@
+LET IT DIE Offline Safe Content Installer v3.1
+================================================
+
+This self-contained Windows installer combines safe offline blueprint routes,
+the corrected collaboration decal artwork, and a pool-only decal restoration.
+It does not edit a save file and contains no runtime combat cheats.
+
+DECALS: MUSHROOM CLUB POOL ONLY
+--------------------------------
+The installer adds 33 retained premium decals to the normal offline Mushroom
+Club RNG pool. It does not create decal giveaway quests:
+
+- 32 collaboration decals:
+  - No More Heroes: 11
+  - killer7: 10
+  - Gravity Rush 2: Kat
+  - World of Tanks: 10
+- Ultimate Fighter's Return: 1
+
+Each entry uses the offline game's existing rarity weight:
+1-star 74, 2-star 72, 3-star 40, 4-star 4, and 5-star 2.
+Ultimate Fighter's Return is a five-star decal with weight 2. Removing the pool
+entries does not remove decals already owned in save data.
+
+BLUEPRINT QUESTS
+----------------
+Seven blueprints whose required cooked assets remain are exposed through
+one-time Hunting Hater quests:
+
+- Beam Katana 1
+- Travis' Sunglasses 1
+- Travis' Jacket 1
+- Travis' Pants 1
+- Ultra 3D Glasses
+- Ultra 3D Glasses W1
+- Uncle-D2 Head 1
+
+INTENTIONALLY EXCLUDED BLUEPRINTS
+---------------------------------
+The offline database contains 15 more collaboration equipment records whose
+special icon/model packages are absent. They are not exposed because they can
+show repeated or blank equipment and may fail when crafted: Demon Gun, GLIDER,
+Kat's armor set, KAMAS-WoT, Phantom Soldier WoT, Night Raider WoT, and Tank
+Commander WoT equipment.
+
+ARTWORK
+-------
+The pack includes 63 verified native-LZO packages for the 21 retained killer7,
+World of Tanks, and Gravity Rush decal images. The corrected Gravity Rush slot
+is Kat. No More Heroes and Ultimate Fighter's Return artwork already ship with
+the offline game and are not replaced.
+
+INSTALL
+-------
+1. Fully exit LET IT DIE. Returning to the title screen is not enough.
+2. Run LetItDieOfflineSafeContentInstaller-v3.1.exe.
+3. Confirm the detected masters.db. Use Browse if detection fails.
+4. Click "Install all safe content + artwork".
+5. Use the normal Mushroom Club stew to draw the 33 pool decals.
+6. For blueprints, accept the seven added D-Mate quests, kill one Hater, and
+   report them.
+
+The decal pool, blueprint quests, and artwork can also be controlled
+independently. Adding the pool automatically removes any unclaimed decal quest
+definitions left by v3.0; decals already owned are unaffected.
+
+BACKUP AND RESTORE
+------------------
+The first database change stores a verified clean baseline under:
+%LOCALAPPDATA%\LetItDieOfflineContentPatcher\Backups
+
+Artwork replacements are backed up under:
+%LOCALAPPDATA%\LetItDieOfflineContentPatcher\ArtworkBackups
+
+"Restore database + artwork" returns both file sets to their recorded
+pre-install state. Rollback is hash-guarded and protects files changed after
+installation. Claimed blueprints and owned decals remain in save data.
+
+SAFETY
+------
+- The installer refuses to patch while BrgGame-Steam.exe is running.
+- masters.db is changed through a temporary copy and SQLite integrity_check.
+- Existing modified pool entries are preserved instead of overwritten.
+- Every artwork source and installed copy is verified with SHA-256.
+- The artwork packages use the game's native top-level LZO compression.
+- Reapplying pool entries and blueprint quests is idempotent.
+
+SHARING
+-------
+The EXE is self-contained and does not require Python. The companion ZIP also
+contains this README, SHA256SUMS.txt, and a validation report.
