@@ -17,12 +17,12 @@ from tkinter import filedialog, messagebox, ttk
 
 
 APP_NAME = "LET IT DIE Offline Safe Content Installer"
-APP_VERSION = "3.1"
+APP_VERSION = "3.53"
 GAME_PROCESS = "BrgGame-Steam.exe"
 DB_RELATIVE = Path("BrgGame") / "Content" / "masters.db"
 COOKED_RELATIVE = Path("BrgGame") / "CookedPCConsole"
 ARTWORK_RELATIVE = Path("assets") / "collab_decal_art"
-ARTWORK_PACKAGE_COUNT = 63
+ARTWORK_PACKAGE_COUNT = 105
 OFFLINE_GACHA_ID = "SKLGACH_NORMAL_OFFLINE"
 ULTIMATE_FIGHTER_RETURN_ID = "SKL_FIGHTER_STUP_02_P"
 POOL_ODDS_BY_RARITY = {1: 74, 2: 72, 3: 40, 4: 4, 5: 2}
@@ -88,35 +88,9 @@ PREVIOUS_BLUEPRINT_QUESTS = (
     RewardQuest("CODEX_COLLAB_U3DW", 20006, "RWD_CODEX_U3DW", "ITMP_SPE_HEAD_019", "Ultra 3D Glasses W1"),
 )
 
-ADDITIONAL_COLLAB_BLUEPRINTS = (
-    ("ITMP_ARM_WP017_0A1", "Demon Gun 1"),
-    ("ITMP_ARM_WP025_0K1", "GLIDER 1"),
-    ("ITMP_SPE_HEAD_003", "Kat Head 1"),
-    ("ITMP_SPE_TOPS_003", "Kat Body 1"),
-    ("ITMP_SPE_BTM_003", "Kat Boots 1"),
-    ("ITMP_ARM_WP031_0A1", "KAMAS-WoT Assault Rifle01"),
-    ("ITMP_MIL_HEAD_1005", "Phantom Soldier Head WoT01"),
-    ("ITMP_MIL_TOPS_1005", "Phantom Soldier Body WoT01"),
-    ("ITMP_MIL_BTM_1005", "Phantom Soldier Pants WoT01"),
-    ("ITMP_MIL_HEAD_1007", "Night Raider Head WoT01"),
-    ("ITMP_MIL_TOPS_1007", "Night Raider Body WoT01"),
-    ("ITMP_MIL_BTM_1007", "Night Raider Pants WoT01"),
-    ("ITMP_SPE_HEAD_011", "Tank Commander Helmet Ver.1"),
-    ("ITMP_SPE_TOPS_011", "Tank Commander Armor Ver.1"),
-    ("ITMP_SPE_BTM_011", "Tank Commander Pants Ver.1"),
-    ("ITMP_SPE_HEAD_025", "Uncle-D2 Head 1"),
+SAFE_ADDITIONAL_BLUEPRINT_QUESTS = (
+    RewardQuest("CODEX_BP_COLLAB_16", 20116, "RWD_CODEX_BP_COLLAB_16", "ITMP_SPE_HEAD_025", "Uncle-D2 Head 1"),
 )
-
-ADDITIONAL_COLLAB_BLUEPRINT_QUESTS = generated_quests(
-    "CODEX_BP_COLLAB", "RWD_CODEX_BP_COLLAB", 20101, ADDITIONAL_COLLAB_BLUEPRINTS
-)
-# The offline build retains the database rows for all 16 later collaboration
-# blueprints, but 15 of them are missing their special UI icon and model
-# packages. Exposing those incomplete rows makes the R&D screen reuse the Beam
-# Katana icon across whole upgrade chains and may fail when an item is crafted.
-# Uncle-D2 Head is the only later record whose required packages remain.
-INCOMPLETE_BLUEPRINT_QUESTS = ADDITIONAL_COLLAB_BLUEPRINT_QUESTS[:-1]
-SAFE_ADDITIONAL_BLUEPRINT_QUESTS = ADDITIONAL_COLLAB_BLUEPRINT_QUESTS[-1:]
 ALL_COLLAB_BLUEPRINT_QUESTS = PREVIOUS_BLUEPRINT_QUESTS + SAFE_ADDITIONAL_BLUEPRINT_QUESTS
 
 COLLAB_DECALS = (
@@ -136,6 +110,8 @@ COLLAB_DECALS = (
     ("SKL_HARMAN_SMITH_K7_P", "Harman Smith"),
     ("SKL_HENRY_NMH_P", "HENRY"),
     ("SKL_HOLLY_SUMMERS_NMH_P", "HOLLY SUMMERS"),
+    ("SKL_HPCUREUP_03_P", "Apple"),
+    ("SKL_HPUP_ATKUP_P", "Panther Mode"),
     ("SKL_HPUP_WOT_P", "World of Tanks"),
     ("SKL_IWAZARU_K7_P", "Iwazaru"),
     ("SKL_JEANE_NMH_P", "JEANE"),
@@ -143,6 +119,7 @@ COLLAB_DECALS = (
     ("SKL_KEVIN_SMITH_K7_P", "Kevin Smith"),
     ("SKL_LESS_DIFFUSION_WOT_P", "SHARPSHOOTER"),
     ("SKL_MASK_DE_SMITH_K7_P", "MASK De Smith"),
+    ("SKL_NDFALL_AUSTEALTH_P", "Dusty"),
     ("SKL_NODMG_RANDOM_WOT_P", "STEEL WALL"),
     ("SKL_PATROL_WOT_P", "PATROL DUTY"),
     ("SKL_SAMANTHA_K7_P", "Samantha"),
@@ -165,6 +142,9 @@ DECAL_STEAM_COMPAT_IDS = tuple(
 DECAL_STEAM_NUMBERS = {
     skill_id: 330 + index for index, skill_id in enumerate(DECAL_STEAM_COMPAT_IDS)
 }
+DECAL_STEAM_NUMBERS["SKL_NDFALL_AUSTEALTH_P"] = 351
+DECAL_STEAM_NUMBERS["SKL_HPCUREUP_03_P"] = 352
+DECAL_STEAM_NUMBERS["SKL_HPUP_ATKUP_P"] = 353
 NMH_DECAL_QUESTS = tuple(quest for quest in ALL_COLLAB_DECAL_QUESTS if "_NMH" in quest.target_id)
 KILLER7_DECAL_QUESTS = tuple(quest for quest in ALL_COLLAB_DECAL_QUESTS if "_K7" in quest.target_id)
 WOT_DECAL_QUESTS = tuple(quest for quest in ALL_COLLAB_DECAL_QUESTS if "_WOT" in quest.target_id)
@@ -231,7 +211,6 @@ LEGACY_CONTENT_CATEGORIES = (
     ),
 )
 CONTENT_CATEGORIES = tuple(category for category in LEGACY_CONTENT_CATEGORIES if category.reward_type == "ITEM")
-CATEGORY_BY_KEY = {category.key: category for category in CONTENT_CATEGORIES}
 BLUEPRINT_CATEGORIES = CONTENT_CATEGORIES
 DECAL_CATEGORIES: tuple[ContentCategory, ...] = ()
 TOTAL_REWARDS = sum(len(category.quests) for category in CONTENT_CATEGORIES)
@@ -239,7 +218,6 @@ TOTAL_BLUEPRINTS = len(ALL_COLLAB_BLUEPRINT_QUESTS)
 TOTAL_DECALS = len(COLLAB_DECALS)
 POOL_DECAL_IDS = tuple(quest.target_id for quest in ALL_COLLAB_DECAL_QUESTS) + (ULTIMATE_FIGHTER_RETURN_ID,)
 TOTAL_POOL_DECALS = len(POOL_DECAL_IDS)
-
 
 class DatabaseLockedError(OSError):
     pass
@@ -391,16 +369,34 @@ def install_artwork_packages(
     installed, expected, mismatched = artwork_status(path, source_root)
     if previous and installed == expected and not mismatched:
         return 0, 0, expected
+    previous_files: dict[str, dict] = {}
     if previous:
+        previous_files = dict(previous.get("files", {}))
+        manifest_names = {record["name"] for record in records}
+        if not previous_files or not set(previous_files).issubset(manifest_names):
+            raise OSError("The recorded artwork installation is not compatible with this upgrade.")
+        for name, saved in previous_files.items():
+            target = cooked / name
+            installed_hash = str(saved.get("installed_sha256") or "").lower()
+            if not target.is_file() or not installed_hash or sha256_file(target).lower() != installed_hash:
+                raise OSError(
+                    "A previously installed artwork package is missing or changed. "
+                    "Use Restore artwork from the version that installed it before retrying."
+                )
+
+    if mismatched:
         raise OSError(
-            "A partial or changed artwork installation is already recorded. "
-            "Use Restore artwork first, then retry."
+            f"{mismatched} existing artwork package(s) differ from the runtime-tested set. "
+            "They were left untouched; restore the earlier artwork pack before retrying."
         )
 
     backup_root = app_data_dir() / "ArtworkBackups" / f"{timestamp()}-{os.getpid()}"
-    file_state: dict[str, dict] = {}
-    created = replaced = unchanged = 0
+    file_state: dict[str, dict] = dict(previous_files)
+    created = replaced = 0
+    unchanged = len(previous_files)
     for record in records:
+        if record["name"] in file_state:
+            continue
         target = cooked / record["name"]
         installed_hash = record["sha256"]
         saved = {
@@ -442,7 +438,7 @@ def install_artwork_packages(
 
     for record in records:
         saved = file_state[record["name"]]
-        if saved["action"] == "PreexistingIdentical":
+        if record["name"] in previous_files or saved["action"] == "PreexistingIdentical":
             continue
         _atomic_verified_copy(source_root / record["name"], cooked / record["name"], record["sha256"])
 
@@ -775,8 +771,7 @@ def decal_pool_status(path: Path) -> tuple[int, int, int]:
 
 
 def install_category(conn: sqlite3.Connection, category: ContentCategory) -> int:
-    touched = remove_quest_specs(conn, INCOMPLETE_BLUEPRINT_QUESTS)
-    touched += remove_quest_specs(conn, ALL_COLLAB_DECAL_QUESTS)
+    touched = remove_quest_specs(conn, ALL_COLLAB_DECAL_QUESTS)
     _verify_targets(conn, category)
     template, columns, indexes = _quest_template(conn)
     quest_sql = f"INSERT OR REPLACE INTO master_quest ({','.join(columns)}) VALUES ({','.join('?' for _ in columns)})"
@@ -834,11 +829,7 @@ def remove_quest_specs(conn: sqlite3.Connection, quests: tuple[RewardQuest, ...]
 
 
 def remove_category(conn: sqlite3.Connection, category: ContentCategory) -> int:
-    return (
-        remove_quest_specs(conn, INCOMPLETE_BLUEPRINT_QUESTS)
-        + remove_quest_specs(conn, ALL_COLLAB_DECAL_QUESTS)
-        + remove_quest_specs(conn, category.quests)
-    )
+    return remove_quest_specs(conn, ALL_COLLAB_DECAL_QUESTS) + remove_quest_specs(conn, category.quests)
 
 
 def category_status_conn(conn: sqlite3.Connection, category: ContentCategory) -> tuple[int, int]:
@@ -899,16 +890,15 @@ class ContentPatcherApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title(f"{APP_NAME} v{APP_VERSION}")
-        self.geometry("1000x910")
-        self.minsize(900, 780)
+        self.geometry("980x760")
+        self.minsize(860, 720)
         self.option_add("*Font", ("Segoe UI", 10))
         found = discover_database()
         self.db_var = tk.StringVar(value=str(found) if found else "")
         self.database_var = tk.StringVar(value="Select masters.db.")
         self.artwork_var = tk.StringVar(value="Artwork packages not checked.")
         self.pool_var = tk.StringVar(value="Mushroom Club pool not checked.")
-        self.category_vars = {category.key: tk.StringVar(value="Not checked") for category in CONTENT_CATEGORIES}
-        self.category_buttons: dict[str, ttk.Button] = {}
+        self.blueprint_var = tk.StringVar(value="Blueprint quests not checked.")
         self._build_ui()
         self.after(100, self.refresh_status)
 
@@ -918,7 +908,7 @@ class ContentPatcherApp(tk.Tk):
         ttk.Label(outer, text=APP_NAME, font=("Segoe UI Semibold", 18)).pack(anchor="w")
         ttk.Label(
             outer,
-            text="Standalone, reversible offline blueprint, decal, and collaboration-artwork controls.",
+            text="A compact, reversible installer for offline blueprints, decals, and collaboration artwork.",
             foreground="#555555",
         ).pack(anchor="w", pady=(2, 10))
 
@@ -935,19 +925,17 @@ class ContentPatcherApp(tk.Tk):
         ttk.Label(
             artwork,
             text=(
-                "Adds 63 native-LZO cooked packages for the 21 retained killer7, World of Tanks, and Gravity Rush decal images. "
-                "Every source file is SHA-256 verified before installation; changed originals are backed up."
+                "Preserves the 102 runtime-tested packages and adds three packages for Panther Mode, covering 35 retained collaboration decal images. "
+                "Every source file is SHA-256 verified before installation; differing existing packages are left untouched."
             ),
             foreground="#555555", wraplength=900, justify="left",
         ).pack(anchor="w")
         artwork_row = ttk.Frame(artwork)
         artwork_row.pack(fill="x", pady=(7, 0))
-        self.artwork_install_button = ttk.Button(
-            artwork_row, text="Install / update artwork", command=self.install_artwork
+        self.artwork_button = ttk.Button(
+            artwork_row, text="Install artwork", command=self.toggle_artwork
         )
-        self.artwork_install_button.pack(side="left")
-        self.artwork_restore_button = ttk.Button(artwork_row, text="Restore artwork", command=self.restore_artwork)
-        self.artwork_restore_button.pack(side="left", padx=(8, 0))
+        self.artwork_button.pack(side="left")
         ttk.Label(artwork_row, textvariable=self.artwork_var, foreground="#174a7e").pack(side="left", padx=(12, 0))
 
         pool = ttk.LabelFrame(outer, text=f"Offline Mushroom Club RNG pool ({TOTAL_POOL_DECALS} decals)", padding=9)
@@ -955,7 +943,7 @@ class ContentPatcherApp(tk.Tk):
         ttk.Label(
             pool,
             text=(
-                "Adds all 32 retained collaboration decals plus Ultimate Fighter's Return to the normal offline draw pool. "
+                "Adds all 35 retained collaboration decals plus Ultimate Fighter's Return to the normal offline draw pool. "
                 "Uses the game's standard rarity weights and does not grant any decal directly."
             ),
             foreground="#555555", wraplength=900, justify="left",
@@ -966,54 +954,32 @@ class ContentPatcherApp(tk.Tk):
         self.pool_button.pack(side="left")
         ttk.Label(pool_row, textvariable=self.pool_var, foreground="#174a7e").pack(side="left", padx=(12, 0))
 
-        content = ttk.LabelFrame(outer, text="Safe one-time blueprint quest packs", padding=10)
+        content = ttk.LabelFrame(outer, text=f"Safe one-time blueprint quests ({TOTAL_BLUEPRINTS})", padding=10)
         content.pack(fill="x", pady=(10, 0))
-        content.columnconfigure(1, weight=1)
-        for row_index, category in enumerate(CONTENT_CATEGORIES):
-            ttk.Label(content, text=category.label, font=("Segoe UI Semibold", 10)).grid(
-                row=row_index, column=0, sticky="w", padx=(0, 12), pady=5
-            )
-            ttk.Label(content, text=category.description, foreground="#555555").grid(
-                row=row_index, column=1, sticky="w", pady=5
-            )
-            button = ttk.Button(content, text="Enable", width=10, command=lambda key=category.key: self.toggle_category(key))
-            button.grid(row=row_index, column=2, padx=(10, 8), pady=4)
-            self.category_buttons[category.key] = button
-            ttk.Label(content, textvariable=self.category_vars[category.key], width=18).grid(
-                row=row_index, column=3, sticky="w", pady=5
-            )
-        pack_actions = ttk.Frame(content)
-        pack_actions.grid(row=len(CONTENT_CATEGORIES), column=0, columnspan=4, sticky="ew", pady=(8, 0))
-        ttk.Button(pack_actions, text=f"Enable all {TOTAL_REWARDS} blueprint quests", command=self.enable_all).pack(side="left")
+        ttk.Label(
+            content,
+            text=(
+                "One switch controls the complete safe set: Beam Katana, Travis' set, both Ultra 3D Glasses, "
+                "and Uncle-D2 Head. The set remains below the game's 10-visible-quest limit."
+            ),
+            foreground="#555555", wraplength=900, justify="left",
+        ).pack(anchor="w")
+        blueprint_row = ttk.Frame(content)
+        blueprint_row.pack(fill="x", pady=(7, 0))
+        self.blueprint_button = ttk.Button(
+            blueprint_row, text=f"Enable all {TOTAL_BLUEPRINTS} quests", command=self.toggle_blueprints
+        )
+        self.blueprint_button.pack(side="left")
+        ttk.Label(blueprint_row, textvariable=self.blueprint_var, foreground="#174a7e").pack(side="left", padx=(12, 0))
         ttk.Button(
-            pack_actions, text="Install all safe content + artwork", command=self.install_everything
-        ).pack(side="left", padx=(8, 0))
-        ttk.Button(pack_actions, text="Disable all added quests", command=self.disable_all).pack(side="left", padx=(8, 0))
-        ttk.Button(
-            pack_actions, text="Repair claimed decal visibility", command=self.repair_decals
-        ).pack(side="left", padx=(8, 0))
-        ttk.Label(pack_actions, text="Claimed rewards remain in save data.", foreground="#555555").pack(side="right")
+            blueprint_row, text="Install / update complete safe pack", command=self.install_everything
+        ).pack(side="right")
 
         controls = ttk.Frame(outer)
         controls.pack(fill="x", pady=(10, 0))
-        ttk.Button(controls, text="Restore database + artwork", command=self.restore_everything).pack(side="left")
-        ttk.Button(controls, text="Restore original database only", command=self.restore_original).pack(side="left", padx=(8, 0))
+        ttk.Button(controls, text="Restore everything", command=self.restore_everything).pack(side="left")
         ttk.Button(controls, text="Refresh status", command=self.refresh_status).pack(side="left", padx=(8, 0))
         ttk.Label(controls, text="Game must be fully closed", foreground="#9b1c1c").pack(side="right")
-
-        instructions = ttk.LabelFrame(outer, text="Instructions", padding=9)
-        instructions.pack(fill="x", pady=(10, 0))
-        ttk.Label(
-            instructions,
-            text=(
-                "Close the game, add the decals to the pool, and enable the desired blueprint packs. In D-Mate > Quests, "
-                "accept the seven blueprint quests, kill one Hater, and report them. Decals are obtained randomly from the "
-                "normal Mushroom Club stew; this build creates no decal giveaway quests. Install All enables the seven safe "
-                "blueprint quests, adds all 33 decals to the pool, and installs the verified artwork pack. "
-                "Disable removes unclaimed added quests; Restore returns masters.db and artwork to their recorded originals."
-            ),
-            justify="left", wraplength=890,
-        ).pack(anchor="w")
 
         log_frame = ttk.LabelFrame(outer, text="Activity", padding=7)
         log_frame.pack(fill="both", expand=True, pady=(10, 0))
@@ -1049,48 +1015,131 @@ class ContentPatcherApp(tk.Tk):
         ok, detail = validate_database(path)
         self.database_var.set(detail)
         if not ok:
-            for category in CONTENT_CATEGORIES:
-                self.category_vars[category.key].set("Unavailable")
+            self.blueprint_var.set("Unavailable")
+            self.blueprint_button.configure(state="disabled")
             self.log(detail)
             return
         try:
             statuses = all_status(path)
-            for category in CONTENT_CATEGORIES:
-                installed, expected = statuses[category.key]
-                self.category_vars[category.key].set(f"{installed}/{expected} ready")
-                self.category_buttons[category.key].configure(text="Disable" if installed == expected else "Enable")
+            blueprint_ready = sum(statuses[category.key][0] for category in CONTENT_CATEGORIES)
+            self.blueprint_var.set(f"{blueprint_ready}/{TOTAL_BLUEPRINTS} ready")
+            self.blueprint_button.configure(
+                state="normal",
+                text=(
+                    f"Disable all {TOTAL_BLUEPRINTS} quests"
+                    if blueprint_ready == TOTAL_BLUEPRINTS else
+                    f"Enable all {TOTAL_BLUEPRINTS} quests"
+                ),
+            )
             self.log(detail)
         except sqlite3.Error as exc:
+            self.blueprint_var.set("Status check failed")
             self.log(f"Status check failed: {exc}")
 
     def _refresh_artwork_status(self, path: Path) -> None:
         try:
             installed, expected, mismatched = artwork_status(path)
-            if mismatched:
-                self.artwork_var.set(f"Safety stop: {mismatched} unknown/modified package(s)")
+            root_key = str(game_root_from_database(path)).lower()
+            previous = load_state().get("artwork_installs", {}).get(root_key, {})
+            previous_files = previous.get("files", {})
+            cooked = cooked_dir_from_database(path)
+            changed_tracked = 0
+            for name, saved in previous_files.items():
+                target = cooked / name
+                saved_hash = str(saved.get("installed_sha256") or "").lower()
+                if not target.is_file() or not saved_hash or sha256_file(target).lower() != saved_hash:
+                    changed_tracked += 1
+            if changed_tracked:
+                self.artwork_var.set(
+                    f"Safety stop: {changed_tracked} previously tracked package(s) changed"
+                )
+                self.artwork_button.configure(text="Artwork conflict", state="disabled")
+            elif mismatched:
+                self.artwork_var.set(
+                    f"Safety stop: {mismatched} package(s) differ from the runtime-tested set"
+                )
+                self.artwork_button.configure(text="Artwork conflict", state="disabled")
             elif installed == expected:
                 self.artwork_var.set(f"Installed and verified: {installed}/{expected}")
+                self.artwork_button.configure(text="Restore artwork", state="normal")
             elif installed:
                 self.artwork_var.set(f"Partially installed: {installed}/{expected}")
+                self.artwork_button.configure(text="Finish artwork install", state="normal")
             else:
                 self.artwork_var.set(f"Not installed: 0/{expected}")
+                self.artwork_button.configure(text="Install artwork", state="normal")
         except (OSError, ValueError) as exc:
             self.artwork_var.set(f"Unavailable: {exc}")
+            self.artwork_button.configure(text="Artwork unavailable", state="disabled")
 
     def _refresh_pool_status(self, path: Path) -> None:
         try:
             ready, expected, modified = decal_pool_status(path)
             if modified:
                 self.pool_var.set(f"Safety stop: {modified} missing or modified definition(s)")
-                self.pool_button.configure(text="Review pool")
+                self.pool_button.configure(text="Pool conflict", state="disabled")
             elif ready == expected:
                 self.pool_var.set(f"Ready: {ready}/{expected} decals in pool")
-                self.pool_button.configure(text="Remove added pool entries")
+                self.pool_button.configure(text="Remove added pool entries", state="normal")
             else:
                 self.pool_var.set(f"Not installed: {ready}/{expected} decals in pool")
-                self.pool_button.configure(text="Add decals to pool")
+                self.pool_button.configure(text="Add decals to pool", state="normal")
         except (OSError, ValueError, sqlite3.Error) as exc:
             self.pool_var.set(f"Unavailable: {exc}")
+            self.pool_button.configure(text="Pool unavailable", state="disabled")
+
+    def toggle_artwork(self) -> None:
+        path = self.selected_path()
+        try:
+            installed, expected, mismatched = artwork_status(path)
+        except (OSError, ValueError) as exc:
+            messagebox.showerror(APP_NAME, f"Artwork status is unavailable.\n\n{exc}")
+            return
+        if mismatched:
+            messagebox.showerror(
+                APP_NAME,
+                "One or more artwork packages was changed by something else. The safety check refused to overwrite it.",
+            )
+            return
+        if installed == expected:
+            self.restore_artwork()
+        else:
+            self.install_artwork()
+
+    def toggle_blueprints(self) -> None:
+        path = self.selected_path()
+        try:
+            statuses = all_status(path)
+            ready = sum(statuses[category.key][0] for category in CONTENT_CATEGORIES)
+        except (OSError, sqlite3.Error):
+            ready = 0
+        enable = ready != TOTAL_BLUEPRINTS
+        action = "Enable" if enable else "Disable"
+        detail = (
+            f"This adds all {TOTAL_BLUEPRINTS} safe one-time blueprint quests."
+            if enable else
+            "Unclaimed safe blueprint quests will be removed. Claimed rewards remain in save data."
+        )
+        if not messagebox.askyesno(
+            APP_NAME, f"{action} all safe blueprint quests?\n\n{detail}", icon="question"
+        ):
+            return
+
+        def callback(conn):
+            operation = install_category if enable else remove_category
+            return sum(operation(conn, category) for category in CONTENT_CATEGORIES)
+
+        past_tense = "enabled" if enable else "disabled"
+        if self._mutate(
+            f"{action}ing all safe blueprint quests…",
+            callback,
+            f"Safe blueprint quests {past_tense}",
+        ):
+            messagebox.showinfo(
+                APP_NAME,
+                f"All {TOTAL_BLUEPRINTS} safe blueprint quests were {past_tense}."
+                + (" Claimed rewards were not changed." if not enable else ""),
+            )
 
     def _preflight(self) -> Path | None:
         path = self.selected_path()
@@ -1185,76 +1234,6 @@ class ContentPatcherApp(tk.Tk):
                 temp.unlink(missing_ok=True)
             except OSError:
                 pass
-
-    def toggle_category(self, key: str) -> None:
-        category = CATEGORY_BY_KEY[key]
-        path = self.selected_path()
-        try:
-            statuses = all_status(path)
-            installed, expected = statuses[key]
-        except (OSError, sqlite3.Error):
-            installed, expected = 0, len(category.quests)
-        enable = installed != expected
-        action = "enable" if enable else "disable"
-        if not messagebox.askyesno(
-            APP_NAME,
-            f"{action.title()} {category.label}?\n\n"
-            + ("Claimed rewards remain in your save after disabling." if not enable else f"This adds {expected} one-time quests."),
-            icon="question",
-        ):
-            return
-        callback = (lambda conn: install_category(conn, category)) if enable else (lambda conn: remove_category(conn, category))
-        if self._mutate(f"{action.title()}ing {category.label}…", callback, f"{category.label} {action}d"):
-            messagebox.showinfo(APP_NAME, f"{category.label} {action}d successfully.")
-
-    def enable_all(self) -> None:
-        if not messagebox.askyesno(
-            APP_NAME,
-            f"Enable all {TOTAL_REWARDS} one-time blueprint quests?",
-            icon="question",
-        ):
-            return
-
-        def callback(conn):
-            return sum(install_category(conn, category) for category in CONTENT_CATEGORIES)
-
-        if self._mutate("Enabling all safe blueprint quest packs…", callback, "All blueprint packs enabled"):
-            messagebox.showinfo(
-                APP_NAME,
-                f"All {TOTAL_BLUEPRINTS} safe blueprint quests are ready. No decal quests were added.",
-            )
-
-    def disable_all(self) -> None:
-        if not messagebox.askyesno(
-            APP_NAME,
-            "Remove every added CODEX reward quest?\n\nAlready claimed blueprints and decals remain in save data.",
-            icon="question",
-        ):
-            return
-
-        def callback(conn):
-            return sum(remove_category(conn, category) for category in CONTENT_CATEGORIES)
-
-        if self._mutate("Removing all added reward quests…", callback, "All added reward quests removed"):
-            messagebox.showinfo(APP_NAME, "All added quest definitions were removed. Claimed rewards were not changed.")
-
-    def repair_decals(self) -> None:
-        if not messagebox.askyesno(
-            APP_NAME,
-            "Repair Steam visibility for every claimed collaboration decal?\n\n"
-            "This does not edit save data or add quests. Restart the game afterward.",
-            icon="question",
-        ):
-            return
-        if self._mutate(
-            "Repairing collaboration decal Steam catalog mappings…",
-            lambda conn: ensure_decal_compatibility(conn),
-            "Collaboration decal visibility repaired",
-        ):
-            messagebox.showinfo(
-                APP_NAME,
-                "Decal compatibility records were repaired. Restart the game and check the Mushroom Club again.",
-            )
 
     def toggle_decal_pool(self) -> None:
         path = self.selected_path()
@@ -1406,8 +1385,8 @@ class ContentPatcherApp(tk.Tk):
             baseline = legacy
         if not messagebox.askyesno(
             APP_NAME,
-            "Restore both masters.db and the artwork pack to their recorded pre-install state?\n\n"
-            "Claimed rewards remain in save data. Modified or unknown artwork files are protected.",
+            "Restore masters.db and the decal artwork pack to their pre-install state?\n\n"
+            "Claimed rewards remain in save data. Modified or unknown package files are protected.",
             icon="question",
         ):
             return
@@ -1434,60 +1413,13 @@ class ContentPatcherApp(tk.Tk):
             self.refresh_status()
             messagebox.showinfo(
                 APP_NAME,
-                "Database and artwork were restored successfully. Claimed save rewards were not removed.",
+                "Database and installed packages were restored successfully. Claimed save rewards were not removed.",
             )
         except (OSError, ValueError, sqlite3.Error) as exc:
             self.log(f"Complete restore stopped safely: {exc}")
             messagebox.showerror(APP_NAME, f"Complete restore did not finish.\n\n{exc}")
         finally:
             temp.unlink(missing_ok=True)
-
-    def restore_original(self) -> None:
-        path = self._preflight()
-        if path is None:
-            return
-        _state, entry = self._state_entry(path)
-        baseline = Path(entry.get("baseline", ""))
-        if not baseline.is_file() or not validate_database(baseline)[0]:
-            legacy = self._legacy_baseline(path)
-            if legacy is None:
-                messagebox.showinfo(APP_NAME, "No verified original baseline is available yet.")
-                return
-            baseline = legacy
-        if not messagebox.askyesno(
-            APP_NAME,
-            f"Restore the original database?\n\n{baseline}\n\n"
-            "Claimed rewards stay in save data, but collaboration decals that require the Steam visibility repair "
-            "will be hidden again until Repair claimed decal visibility is reapplied.",
-            icon="question",
-        ):
-            return
-        temp = path.with_name(f".{path.name}.codex-restore-{os.getpid()}.tmp")
-        prechange = backup_dir() / f"masters.before-original-restore.{timestamp()}.db"
-        try:
-            shutil.copy2(path, prechange)
-            shutil.copy2(baseline, temp)
-            ok, detail = validate_database(temp)
-            if not ok:
-                raise sqlite3.DatabaseError(detail)
-            assert_database_replaceable(path)
-            os.replace(temp, path)
-            self.log(f"Original database restored from {baseline}.")
-            self.refresh_status()
-            messagebox.showinfo(
-                APP_NAME,
-                "The original database was restored. Claimed rewards remain in save data. Reapply the decal "
-                "visibility repair if collaboration decals are hidden.",
-            )
-        except (OSError, sqlite3.Error) as exc:
-            self.log(f"Restore stopped safely: {exc}")
-            messagebox.showerror(APP_NAME, f"The installed database was not replaced.\n\n{exc}")
-        finally:
-            try:
-                temp.unlink(missing_ok=True)
-            except OSError:
-                pass
-
 
 def embedded_self_test() -> None:
     records = load_artwork_manifest()
@@ -1497,7 +1429,7 @@ def embedded_self_test() -> None:
             raise OSError(f"Embedded artwork size check failed: {record['name']}")
         if sha256_file(source).lower() != record["sha256"]:
             raise OSError(f"Embedded artwork hash check failed: {record['name']}")
-    if TOTAL_REWARDS != 7 or TOTAL_BLUEPRINTS != 7 or TOTAL_DECALS != 32 or TOTAL_POOL_DECALS != 33:
+    if TOTAL_REWARDS != 7 or TOTAL_BLUEPRINTS != 7 or TOTAL_DECALS != 35 or TOTAL_POOL_DECALS != 36:
         raise RuntimeError("Embedded quest catalog count is incorrect.")
     print(
         f"PASS: {APP_NAME} v{APP_VERSION}; {TOTAL_BLUEPRINTS} blueprint quests, "

@@ -1,21 +1,35 @@
-LET IT DIE Offline Safe Content Installer v3.1
+LET IT DIE Offline Safe Content Installer v3.53
 ================================================
 
 This self-contained Windows installer combines safe offline blueprint routes,
-the corrected collaboration decal artwork, and a pool-only decal restoration.
-It does not edit a save file and contains no runtime combat cheats.
+verified collaboration decal artwork, and a pool-only decal restoration. It
+does not edit a save file and contains no runtime combat cheats.
 
 DECALS: MUSHROOM CLUB POOL ONLY
 --------------------------------
-The installer adds 33 retained premium decals to the normal offline Mushroom
+The installer adds 36 retained premium decals to the normal offline Mushroom
 Club RNG pool. It does not create decal giveaway quests:
 
-- 32 collaboration decals:
-  - No More Heroes: 11
+- 35 collaboration decals:
+  - No More Heroes: 10
+  - Deathverse: Queen B
   - killer7: 10
-  - Gravity Rush 2: Kat
+  - Gravity Rush 2: Apple, Dusty, Kat, and Panther Mode
   - World of Tanks: 10
 - Ultimate Fighter's Return: 1
+
+Dusty uses the retained premium definition SKL_NDFALL_AUSTEALTH_P. Its original
+effect is unchanged: nullifies fall damage and boosts stealth Suplex attacks
+by 30%. The Steam compatibility catalog number is 351, leaving the v3.4
+catalog assignments unchanged.
+
+Apple uses the retained premium definition SKL_HPCUREUP_03_P. Its original
+three-star effect is unchanged: increases HP recovery by 15%. Its Steam
+compatibility catalog number is 352, leaving every earlier assignment intact.
+
+Panther Mode uses the retained premium definition SKL_HPUP_ATKUP_P. Its
+original three-star effect is unchanged: maximum HP +20% and ATK +5%. Its
+Steam compatibility catalog number is 353.
 
 Each entry uses the offline game's existing rarity weight:
 1-star 74, 2-star 72, 3-star 40, 4-star 4, and 5-star 2.
@@ -24,8 +38,8 @@ entries does not remove decals already owned in save data.
 
 BLUEPRINT QUESTS
 ----------------
-Seven blueprints whose required cooked assets remain are exposed through
-one-time Hunting Hater quests:
+Seven blueprints whose required original cooked assets remain are exposed
+through one-time Hunting Hater quests:
 
 - Beam Katana 1
 - Travis' Sunglasses 1
@@ -35,34 +49,54 @@ one-time Hunting Hater quests:
 - Ultra 3D Glasses W1
 - Uncle-D2 Head 1
 
-INTENTIONALLY EXCLUDED BLUEPRINTS
----------------------------------
-The offline database contains 15 more collaboration equipment records whose
-special icon/model packages are absent. They are not exposed because they can
-show repeated or blank equipment and may fail when crafted: Demon Gun, GLIDER,
-Kat's armor set, KAMAS-WoT, Phantom Soldier WoT, Night Raider WoT, and Tank
-Commander WoT equipment.
+The experimental asset-swapped collaboration blueprints from v3.4 are not
+included in v3.53. Their UI, quest routes, icon bundle, and equipment mapping
+code were removed so that work can continue as a separate mod.
 
 ARTWORK
 -------
-The pack includes 63 verified native-LZO packages for the 21 retained killer7,
-World of Tanks, and Gravity Rush decal images. The corrected Gravity Rush slot
-is Kat. No More Heroes and Ultimate Fighter's Return artwork already ship with
-the offline game and are not replaced.
+The pack includes 105 verified native-LZO packages for all 35 retained
+collaboration decal images: ten No More Heroes decals, ten killer7 decals, ten
+World of Tanks decals, Apple, Dusty, Kat, and Panther Mode from Gravity Rush 2,
+and Queen B from Deathverse. Panther Mode's three cooked UI packages were
+generated from the supplied Google Drive rip, 163_Panther-Mode.png (SHA-256
+e5f77407cd41d2dace6daed06fae4b6fb2da180753111b78cfd7573c2d68161e).
+Apple's three cooked UI packages were generated from the
+supplied Google Drive rip, 162_Apple.png (SHA-256
+8955d2ecf4da13def8a73e233bfe8f22315e5ad59eb8055afc30e81ec56b2655).
+Dusty's three cooked UI packages were generated from the supplied
+Google Drive rip, 164_165_Dusty.png (SHA-256
+576522a66346451ae504c1fbaa590f24543ca2448bf4a509defccb9b53e4138f).
+Ultimate Fighter's Return artwork already ships with the offline game and is
+not replaced.
+
+Version 3.53 preserves all 102 packages confirmed working with v3.52
+byte-for-byte. It adds only Panther Mode's three packages. The incompatible
+No More Heroes package replacements from v3.51 remain excluded.
 
 INSTALL
 -------
 1. Fully exit LET IT DIE. Returning to the title screen is not enough.
-2. Run LetItDieOfflineSafeContentInstaller-v3.1.exe.
+2. Run LetItDieOfflineSafeContentInstaller-v3.53.exe.
 3. Confirm the detected masters.db. Use Browse if detection fails.
-4. Click "Install all safe content + artwork".
-5. Use the normal Mushroom Club stew to draw the 33 pool decals.
+4. Click "Install / update complete safe pack".
+5. Use the normal Mushroom Club stew to draw the 36 pool decals.
 6. For blueprints, accept the seven added D-Mate quests, kill one Hater, and
    report them.
 
-The decal pool, blueprint quests, and artwork can also be controlled
-independently. Adding the pool automatically removes any unclaimed decal quest
-definitions left by v3.0; decals already owned are unaffected.
+The installer recognizes the 102 runtime-tested v3.52 packages already present
+and adds only Panther Mode. If any existing package differs from this tested
+set, installation stops without replacing or backing up that file.
+
+CONTROLS
+--------
+The main window uses one state-aware toggle each for artwork, the decal pool,
+and all seven safe blueprint quests. Complete install and Restore everything
+are the recommended normal workflow. The pool, blueprint quests, and artwork
+can also be controlled independently.
+
+Adding the pool automatically removes any unclaimed decal quest definitions
+left by older versions; decals already owned are unaffected.
 
 BACKUP AND RESTORE
 ------------------
@@ -72,15 +106,20 @@ The first database change stores a verified clean baseline under:
 Artwork replacements are backed up under:
 %LOCALAPPDATA%\LetItDieOfflineContentPatcher\ArtworkBackups
 
-"Restore database + artwork" returns both file sets to their recorded
-pre-install state. Rollback is hash-guarded and protects files changed after
-installation. Claimed blueprints and owned decals remain in save data.
+"Restore everything" returns the database and installed artwork package files
+to their pre-install state. Rollback is hash-guarded and protects files changed
+after installation. Claimed blueprints and owned decals remain in save data.
+
+If v3.4 experimental asset swaps are currently enabled, restore that mode with
+v3.4 before installing v3.53. v3.53 intentionally does not manage those files or
+equipment mappings.
 
 SAFETY
 ------
 - The installer refuses to patch while BrgGame-Steam.exe is running.
 - masters.db is changed through a temporary copy and SQLite integrity_check.
 - Existing modified pool entries are preserved instead of overwritten.
+- Existing artwork that differs from the runtime-tested set is never overwritten.
 - Every artwork source and installed copy is verified with SHA-256.
 - The artwork packages use the game's native top-level LZO compression.
 - Reapplying pool entries and blueprint quests is idempotent.
